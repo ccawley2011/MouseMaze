@@ -3,6 +3,8 @@
 
 #ifdef __NDS__
 #define DATA_PATH "nitro:/"
+#elif defined(__riscos__)
+#define DATA_PATH "/<MouseMaze$Dir>/res/"
 #else
 #define DATA_PATH "res/"
 #endif

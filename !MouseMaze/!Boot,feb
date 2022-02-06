@@ -1,0 +1,2 @@
+Set MouseMaze$Dir <Obey$Dir>
+|IconSprites <MouseMaze$Dir>.!Sprites

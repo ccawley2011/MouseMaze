@@ -43,6 +43,24 @@ if (MINGW)
 	target_link_options(MouseMaze PRIVATE -static-libgcc -static-libstdc++)
 endif()
 
+if(RISCOS)
+	target_link_options(MouseMaze PRIVATE -static)
+	riscos_elf2aif(MouseMaze OUTPUT_NAME MouseMaze,ff8)
+
+	install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/!MouseMaze/!Boot,feb
+	              ${CMAKE_CURRENT_SOURCE_DIR}/!MouseMaze/!Run,feb
+	              ${CMAKE_CURRENT_BINARY_DIR}/MouseMaze,ff8
+	        DESTINATION !MouseMaze
+	)
+	install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/res
+	        DESTINATION !MouseMaze
+	)
+
+	# TODO: Use .zip archives instead
+	set(CPACK_GENERATOR "TGZ")
+	set(CPACK_PACKAGE_FILE_NAME "mousemaze-riscos")
+endif()
+
 if(NINTENDO_DS)
 	target_link_libraries(MouseMaze PRIVATE filesystem fat mm9)
 	nds_create_rom(MouseMaze
@@ -50,3 +68,5 @@ if(NINTENDO_DS)
 		ROMFS ${CMAKE_CURRENT_SOURCE_DIR}/res
 	)
 endif()
+
+include(CPack)
