@@ -19,6 +19,7 @@ endif()
 
 add_executable(MouseMaze WIN32
 	src/main.cpp
+	src/compat.h
 	src/constants.h
 	src/font.cpp
 	src/font.h

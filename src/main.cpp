@@ -1,9 +1,8 @@
-#include <SDL.h>
-
 #ifdef __NDS__
 #include <filesystem.h>
 #endif
 
+#include "compat.h"
 #include "constants.h"
 #include "render.h"
 #include "loop.h"

@@ -1,7 +1,7 @@
 #ifndef RENDER_H
 #define RENDER_H
 
-#include <SDL.h>
+#include "compat.h"
 
 class BaseSprite {
 public:

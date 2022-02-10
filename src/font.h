@@ -1,7 +1,7 @@
 #ifndef FONT_H
 #define FONT_H
 
-#include <SDL.h>
+#include "compat.h"
 
 class BaseRenderer;
 class BaseSprite;

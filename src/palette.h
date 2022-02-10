@@ -1,7 +1,7 @@
 #ifndef PALETTE_H
 #define PALETTE_H
 
-#include <SDL.h>
+#include "compat.h"
 
 static SDL_Color riscos_palette_256[] = {
 	{ 0x00, 0x00, 0x00, 0xFF }, // 0

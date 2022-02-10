@@ -1,7 +1,7 @@
 #ifndef LOOP_H
 #define LOOP_H
 
-#include <SDL.h>
+#include "compat.h"
 
 class BaseRenderer;
 class BaseSprite;

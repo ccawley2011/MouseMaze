@@ -1,7 +1,7 @@
 #ifndef GRID_H
 #define GRID_H
 
-#include <SDL.h>
+#include "compat.h"
 
 class BaseRenderer;
 class BaseSprite;
