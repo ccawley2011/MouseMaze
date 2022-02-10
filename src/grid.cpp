@@ -8,6 +8,7 @@ Grid::Grid(BaseRenderer* renderer, int x, int y, int width, int height) : _rende
 }
 
 Grid::~Grid() {
+	delete _selector;
 	delete _tileSprite;
 	delete _tiles;
 	delete _layout;
@@ -16,6 +17,11 @@ Grid::~Grid() {
 bool Grid::init() {
 	_tileSprite = _renderer->loadSprite(DATA_PATH "tiles.bmp", 0);
 	if (!_tileSprite) {
+		return false;
+	}
+
+	_selector = _renderer->loadSprite(DATA_PATH "selector.bmp", 0);
+	if (!_selector) {
 		return false;
 	}
 
@@ -48,6 +54,8 @@ void Grid::render() {
 			renderTile(_layout[tile], _x + (j * TILE_W), _y + (i * TILE_H));
 		}
 	}
+
+	_selector->render(_x + ((_currentTile % _width) * TILE_W) - 1, _y + ((_currentTile / _width) * TILE_H) - 1);
 }
 
 void Grid::renderTile(int tile, int x, int y) {
@@ -57,17 +65,98 @@ void Grid::renderTile(int tile, int x, int y) {
 	_tileSprite->render(&_tiles[tile], x, y);
 }
 
-bool Grid::handleClick(int x, int y) {
-	if (x < _x || y < _y || x > _x + (_width * TILE_W) || y > _y + (_height * TILE_H))
+void Grid::selectTile(int tile) {
+	_layout[tile]++;
+	if (_layout[tile] == _tileCount)
+		_layout[tile] = 0;
+}
+
+void Grid::moveSelector(int x, int y) {
+	int lastPosition = _currentTile;
+
+	_currentTile += x;
+	if (_currentTile < 0)
+		_currentTile += _width;
+	else if (_currentTile / _width < lastPosition / _width)
+		_currentTile += _width;
+	else if (_currentTile / _width > lastPosition / _width)
+		_currentTile -= _width;
+
+	_currentTile += (y * _width);
+	if (_currentTile < 0)
+		_currentTile += _width * _height;
+	else if (_currentTile >= _width * _height)
+		_currentTile -= _width * _height;
+}
+
+bool Grid::handleMouseMove(Sint32 x, Sint32 y) {
+	if (x < _x || y < _y || x >= _x + (_width * TILE_W) || y >= _y + (_height * TILE_H))
 		return false;
 
 	int tileX = ((x - _x) / TILE_W);
 	int tileY = ((y - _y) / TILE_H);
-	int tile = (tileY * _width) + tileX;
-
-	_layout[tile]++;
-	if (_layout[tile] == _tileCount)
-		_layout[tile] = 0;
+	_currentTile = (tileY * _width) + tileX;
 
 	return true;
+}
+
+bool Grid::handleMouseClick(Sint32 x, Sint32 y) {
+	if (x < _x || y < _y || x >= _x + (_width * TILE_W) || y >= _y + (_height * TILE_H))
+		return false;
+
+	int tileX = ((x - _x) / TILE_W);
+	int tileY = ((y - _y) / TILE_H);
+	selectTile((tileY * _width) + tileX);
+
+	return true;
+}
+
+bool Grid::handleKeyPress(Uint8 state, const SDL_Keysym &keysym) {
+	switch (keysym.sym) {
+	case SDLK_KP_1:
+	case SDLK_END:
+		if (state == SDL_PRESSED)
+			moveSelector(-1, 1);
+		return true;
+	case SDLK_KP_2:
+	case SDLK_DOWN:
+		if (state == SDL_PRESSED)
+			moveSelector(0, 1);
+		return true;
+	case SDLK_KP_3:
+	case SDLK_PAGEDOWN:
+		if (state == SDL_PRESSED)
+			moveSelector(1, 1);
+		return true;
+	case SDLK_KP_4:
+	case SDLK_LEFT:
+		if (state == SDL_PRESSED)
+			moveSelector(-1, 0);
+		return true;
+	case SDLK_KP_6:
+	case SDLK_RIGHT:
+		if (state == SDL_PRESSED)
+			moveSelector(1, 0);
+		return true;
+	case SDLK_KP_7:
+	case SDLK_HOME:
+		if (state == SDL_PRESSED)
+			moveSelector(-1, -1);
+		return true;
+	case SDLK_KP_8:
+	case SDLK_UP:
+		if (state == SDL_PRESSED)
+			moveSelector(0, -1);
+		return true;
+	case SDLK_KP_9:
+	case SDLK_PAGEUP:
+		if (state == SDL_PRESSED)
+			moveSelector(1, -1);
+		return true;
+	case SDLK_SPACE:
+		if (state == SDL_PRESSED)
+			selectTile(_currentTile);
+		return true;
+	}
+	return false;
 }

@@ -36,8 +36,17 @@ void GameLoop::handleEvent(SDL_Event *event) {
 	case SDL_QUIT:
 		_shouldQuit = true;
 		break;
+	case SDL_MOUSEMOTION:
+		if (_grid->handleMouseMove(event->button.x, event->button.y))
+			break;
+		break;
 	case SDL_MOUSEBUTTONDOWN:
-		if (_grid->handleClick(event->button.x, event->button.y))
+		if (_grid->handleMouseClick(event->button.x, event->button.y))
+			break;
+		break;
+	case SDL_KEYDOWN:
+	case SDL_KEYUP:
+		if (_grid->handleKeyPress(event->key.state, event->key.keysym))
 			break;
 		break;
 	}
