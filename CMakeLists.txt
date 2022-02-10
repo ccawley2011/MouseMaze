@@ -97,6 +97,9 @@ if(NINTENDO_DS)
 		NAME "Mouse Maze"
 		ROMFS ${CMAKE_CURRENT_SOURCE_DIR}/res
 	)
+	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/MouseMaze.nds DESTINATION .)
+	set(CPACK_GENERATOR "ZIP")
+	set(CPACK_PACKAGE_FILE_NAME "mousemaze-nds")
 endif()
 
 include(CPack)
