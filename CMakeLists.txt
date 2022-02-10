@@ -39,8 +39,37 @@ if(SDL_FOUND)
 	target_link_libraries(MouseMaze PRIVATE ${SDL_LIBRARY})
 endif(SDL_FOUND)
 
-if (MINGW)
-	target_link_options(MouseMaze PRIVATE -static-libgcc -static-libstdc++)
+if(WIN32)
+	if(MINGW)
+		target_link_options(MouseMaze PRIVATE -static-libgcc -static-libstdc++)
+	endif()
+
+	install(TARGETS MouseMaze DESTINATION .)
+	install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/res DESTINATION .)
+
+	cmake_policy(SET CMP0087 NEW)
+
+	install(CODE [[
+		if(CMAKE_OBJDUMP)
+			string(REGEX REPLACE "objdump.exe" "" MINGW_PATH ${CMAKE_OBJDUMP})
+		endif()
+
+		file(GET_RUNTIME_DEPENDENCIES
+			EXECUTABLES $<TARGET_FILE:MouseMaze>
+			RESOLVED_DEPENDENCIES_VAR _r_deps
+			PRE_EXCLUDE_REGEXES ".*"
+			PRE_INCLUDE_REGEXES "^sdl*"
+			DIRECTORIES ${MINGW_PATH}
+		)
+		file(INSTALL DESTINATION ${CMAKE_INSTALL_PREFIX} MESSAGE_LAZY FILES ${_r_deps})
+	]])
+
+	set(CPACK_GENERATOR "ZIP")
+	if(CMAKE_CL_64)
+		set(CPACK_PACKAGE_FILE_NAME "mousemaze-win64")
+	else()
+		set(CPACK_PACKAGE_FILE_NAME "mousemaze-win32")
+	endif()
 endif()
 
 if(RISCOS)
