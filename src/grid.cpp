@@ -160,3 +160,60 @@ bool Grid::handleKeyPress(Uint8 state, const SDL_Keysym &keysym) {
 	}
 	return false;
 }
+
+bool Grid::handleJoystickButton(Uint8 state, Uint8 button) {
+	switch (button) {
+	case JOYSTICK_BUTTON_A:
+		if (state == SDL_PRESSED)
+			selectTile(_currentTile);
+		return true;
+	}
+	return false;
+}
+
+bool Grid::handleJoystickHat(Uint8 hat, Uint8 value) {
+	int x = 0, y = 0;
+
+	if (value & SDL_HAT_UP)
+		y = -1;
+	if (value & SDL_HAT_DOWN)
+		y = 1;
+	if (value & SDL_HAT_LEFT)
+		x = -1;
+	if (value & SDL_HAT_RIGHT)
+		x = 1;
+
+	moveSelector(x, y);
+
+	return true;
+}
+
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+
+bool Grid::handleControllerButton(Uint8 state, Uint8 button) {
+	switch (button) {
+	case SDL_CONTROLLER_BUTTON_DPAD_DOWN:
+		if (state == SDL_PRESSED)
+			moveSelector(0, 1);
+		return true;
+	case SDL_CONTROLLER_BUTTON_DPAD_LEFT:
+		if (state == SDL_PRESSED)
+			moveSelector(-1, 0);
+		return true;
+	case SDL_CONTROLLER_BUTTON_DPAD_RIGHT:
+		if (state == SDL_PRESSED)
+			moveSelector(1, 0);
+		return true;
+	case SDL_CONTROLLER_BUTTON_DPAD_UP:
+		if (state == SDL_PRESSED)
+			moveSelector(0, -1);
+		return true;
+	case SDL_CONTROLLER_BUTTON_A:
+		if (state == SDL_PRESSED)
+			selectTile(_currentTile);
+		return true;
+	}
+	return false;
+}
+
+#endif

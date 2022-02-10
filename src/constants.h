@@ -10,6 +10,14 @@
 #endif
 
 #ifdef __NDS__
+#define JOYSTICK_BUTTON_A 1
+#define JOYSTICK_BUTTON_B 2
+#else
+#define JOYSTICK_BUTTON_A 0
+#define JOYSTICK_BUTTON_B 1
+#endif
+
+#ifdef __NDS__
 #define SCREEN_X 256
 #define SCREEN_Y 192
 #define GRID_X 8
