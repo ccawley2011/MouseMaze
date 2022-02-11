@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(MouseMaze LANGUAGES CXX)
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/")
+
 set(SDL_VERSION AUTO CACHE STRING "Specify which SDL version to use")
 set_property(CACHE SDL_VERSION PROPERTY STRINGS AUTO SDL1 SDL2)
 
@@ -35,7 +37,8 @@ add_executable(MouseMaze WIN32
 )
 
 if(SDL2_FOUND)
-	target_link_libraries(MouseMaze PRIVATE SDL2::SDL2main SDL2::SDL2)
+	target_include_directories(MouseMaze PUBLIC ${SDL2_INCLUDE_DIR})
+	target_link_libraries(MouseMaze PRIVATE ${SDL2_LIBRARY})
 endif(SDL2_FOUND)
 if(SDL_FOUND)
 	target_include_directories(MouseMaze PUBLIC ${SDL_INCLUDE_DIR})
