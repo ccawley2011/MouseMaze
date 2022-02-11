@@ -22,10 +22,10 @@ private:
 	void openJoystick(int index);
 	void closeJoystick();
 
+	SDL_Joystick* _joystick;
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	SDL_GameController* _controller;
 #endif
-	SDL_Joystick* _joystick;
 
 	BaseRenderer *_renderer;
 	bool _shouldQuit;

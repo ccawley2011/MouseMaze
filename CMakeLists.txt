@@ -42,6 +42,10 @@ if(SDL_FOUND)
 	target_link_libraries(MouseMaze PRIVATE ${SDL_LIBRARY})
 endif(SDL_FOUND)
 
+if(NOT MSVC)
+	target_compile_options(MouseMaze PRIVATE -Wall -Wextra -pedantic)
+endif()
+
 if(WIN32)
 	if(MINGW)
 		target_link_options(MouseMaze PRIVATE -static-libgcc -static-libstdc++)

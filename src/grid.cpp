@@ -191,6 +191,8 @@ bool Grid::handleKeyPress(Uint8 state, const SDL_Keysym &keysym) {
 		if (state == SDL_PRESSED)
 			selectTile(_currentTile);
 		return true;
+	default:
+		break;
 	}
 	return false;
 }
@@ -205,7 +207,7 @@ bool Grid::handleJoystickButton(Uint8 state, Uint8 button) {
 	return false;
 }
 
-bool Grid::handleJoystickHat(Uint8 hat, Uint8 value) {
+bool Grid::handleJoystickHat(Uint8 value) {
 	int x = 0, y = 0;
 
 	if (value & SDL_HAT_UP)

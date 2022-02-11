@@ -20,7 +20,7 @@ public:
 	bool handleMouseClick(Sint32 x, Sint32 y);
 	bool handleKeyPress(Uint8 state, const SDL_Keysym &keysym);
 	bool handleJoystickButton(Uint8 state, Uint8 button);
-	bool handleJoystickHat(Uint8 hat, Uint8 value);
+	bool handleJoystickHat(Uint8 value);
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	bool handleControllerButton(Uint8 state, Uint8 button);
 #endif

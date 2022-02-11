@@ -76,7 +76,7 @@ void GameLoop::handleEvent(SDL_Event *event) {
 	case SDL_JOYHATMOTION:
 		if (!_joystick)
 			break;
-		if (_grid->handleJoystickHat(event->jhat.hat, event->jhat.value))
+		if (_grid->handleJoystickHat(event->jhat.value))
 			break;
 		break;
 #if SDL_VERSION_ATLEAST(2, 0, 0)

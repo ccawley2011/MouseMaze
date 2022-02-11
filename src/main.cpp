@@ -13,6 +13,9 @@ int main(int argc, char* argv[])
 	GameLoop* loop = NULL;
 	int retval = EXIT_FAILURE;
 
+	(void)argc;
+	(void)argv;
+
 #ifdef __NDS__
 	nitroFSInit(NULL);
 #endif
