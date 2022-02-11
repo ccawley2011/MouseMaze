@@ -1,0 +1,28 @@
+name: CMake
+
+on: [push, pull_request]
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        platform:
+        - { packages: cmake ninja-build libsdl2-dev, flags: -G Ninja -DSDL_VERSION=SDL2 }
+        - { packages: cmake ninja-build libsdl1.2-dev, flags: -G Ninja -DSDL_VERSION=SDL1 }
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: sudo apt-get update && sudo apt-get install ${{matrix.platform.packages}}
+
+    - name: Configure CMake
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} ${{matrix.platform.flags}}
+
+    - name: Build
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
