@@ -14,13 +14,16 @@ enum {
 
 class Mouse {
 public:
-	Mouse(Grid* grid, int direction = MOUSE_DOWN, int x = 0, int y = 0) : _grid(grid), _lastAnimTicks(0), _lastMovementTicks(0), _direction(direction), _frame(0), _x(x), _y(y), _lastTileX(x), _lastTileY(y) {}
+	Mouse(Grid* grid, int direction = MOUSE_DOWN, int x = 0, int y = 0) : _grid(grid), _lastAnimTicks(0), _lastMovementTicks(0), _direction(direction), _frame(0), _x(x), _y(y), _lastTileX(x), _lastTileY(y), _goal(false), _dead(false) {}
 	~Mouse() {}
 
 	void render();
 
 	int getDirection() const { return _direction; }
 	int getFrame() const { return _frame; }
+	bool reachedGoal() const { return _goal; }
+	bool isDead() const { return _dead; }
+	int getPoints() const { return 1; }
 
 private:
 	Grid* _grid;
@@ -32,6 +35,8 @@ private:
 	int _y;
 	int _lastTileX;
 	int _lastTileY;
+	bool _goal;
+	bool _dead;
 
 	void nextFrame();
 	void move();

@@ -24,11 +24,12 @@ static const TileInfo tiles_level_1[] = {
 	{ TILE_RIGHT_1,     6, 3 },
 	{ TILE_FIXED_DOWN,  4, 4 },
 	{ TILE_DOWN_1,      5, 4 },
-
 	{ TILE_RIGHT_1,     4, 0 },
 	{ TILE_UP_1,        0, 2 },
 	{ TILE_DOWN_1,      9, 3 },
-	{ TILE_LEFT_1,      5, 5 }
+	{ TILE_LEFT_1,      5, 5 },
+	{ TILE_END_1,       8, 3 },
+	{ TILE_SPIKES,      2, 2 }
 };
 
 static const TileInfo tiles_level_2[] = {
@@ -48,7 +49,7 @@ static const LevelInfo levels[] = {
 	{ tiles_level_2, SDL_arraysize(tiles_level_2) }
 };
 
-Grid::Grid(BaseRenderer* renderer, int x, int y, int width, int height) : _renderer(renderer), _tileSprite(NULL), _mouseSprite(NULL), _selector(NULL), _tiles(NULL), _tileCount(0), _currentTile(0), _x(x), _y(y), _width(width), _height(height) {
+Grid::Grid(BaseRenderer* renderer, int x, int y, int width, int height) : _renderer(renderer), _tileSprite(NULL), _mouseSprite(NULL), _selector(NULL), _tiles(NULL), _tileCount(0), _currentTile(0), _x(x), _y(y), _width(width), _height(height), _miceReleased(0), _miceReturned(0), _score(0), _lastSpawnedTicks(0) {
 	_layout = new Uint8[_width * _height];
 	SDL_memset(_layout, TILE_BLANK, _width * _height);
 	SDL_memset(_mice, 0, sizeof(_mice));
@@ -103,13 +104,6 @@ bool Grid::init() {
 
 	loadLevel(0);
 
-	_mice[0] = new Mouse(this, MOUSE_DOWN,  _x + 0,   _y);
-	_mice[1] = new Mouse(this, MOUSE_LEFT,  _x + 24,  _y);
-	_mice[2] = new Mouse(this, MOUSE_RIGHT, _x + 48,  _y);
-	_mice[3] = new Mouse(this, MOUSE_UP,    _x + 72,  _y);
-	_mice[4] = new Mouse(this, MOUSE_DOWN,  _x + 96,  _y);
-	_mice[5] = new Mouse(this, MOUSE_RIGHT, _x + 120, _y);
-
 	return true;
 }
 
@@ -125,6 +119,8 @@ void Grid::loadLevel(int level) {
 }
 
 void Grid::render() {
+	dispatchMice();
+
 	for (int i = 0; i < _height; i++) {
 		for (int j = 0; j < _width; j++) {
 			int tile = (i * _width) + j;
@@ -136,9 +132,41 @@ void Grid::render() {
 		if (!_mice[i])
 			continue;
 		_mice[i]->render();
+
+		if (_mice[i]->isDead()) {
+			_miceReturned++;
+			delete _mice[i];
+			_mice[i] = NULL;
+		} else if (_mice[i]->reachedGoal()) {
+			_miceReturned++;
+			_score += _mice[i]->getPoints();
+			delete _mice[i];
+			_mice[i] = NULL;
+		}
 	}
 
 	_selector->render(_x + ((_currentTile % _width) * TILE_W) - 1, _y + ((_currentTile / _width) * TILE_H) - 1);
+}
+
+void Grid::dispatchMice() {
+	Uint32 ticks = SDL_GetTicks();
+
+	if (_lastSpawnedTicks + 500 > ticks) {
+		return;
+	}
+
+	_lastSpawnedTicks = ticks;
+
+	for (int i = 0; i < _height; i++) {
+		for (int j = 0; j < _width; j++) {
+			int tile = (i * _width) + j;
+			if (_layout[tile] != TILE_START)
+				continue;
+			if (_miceReleased == SDL_arraysize(_mice))
+				break;
+			_mice[_miceReleased++] = new Mouse(this, MOUSE_DOWN, _x + (j * TILE_W), _y + (i * TILE_H));
+		}
+	}
 }
 
 void Grid::renderMouse(Mouse* mouse, int x, int y) {

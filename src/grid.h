@@ -78,9 +78,14 @@ private:
 	int _y;
 	int _width;
 	int _height;
+	int _miceReleased;
+	int _miceReturned;
+	int _score;
+	Uint32 _lastSpawnedTicks;
 
 protected:
 	void loadLevel(int level);
+	void dispatchMice();
 	void renderMouse(Mouse* mouse, int x, int y);
 	void renderTile(int tile, int x, int y);
 	void selectTile(int tile);

@@ -54,6 +54,13 @@ void Mouse::move() {
 		case TILE_FIXED_DOWN:
 			_direction = MOUSE_DOWN;
 			break;
+		case TILE_END_1:
+		case TILE_END_2:
+			_goal = true;
+			break;
+		case TILE_SPIKES:
+			_dead = true;
+			break;
 		}
 
 		_lastTileX = _x;
