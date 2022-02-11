@@ -3,9 +3,49 @@
 #include "mouse.h"
 #include "render.h"
 
+struct TileInfo {
+	int tile;
+	int x;
+	int y;
+};
+
+struct LevelInfo {
+	const TileInfo *tiles;
+	size_t tiles_count;
+};
+
+static const TileInfo tiles_level_1[] = {
+	{ TILE_START,       1, 1 },
+	{ TILE_UP_1,        4, 1 },
+	{ TILE_FIXED_UP,    5, 1 },
+	{ TILE_LEFT_1,      3, 2 },
+	{ TILE_FIXED_LEFT,  3, 3 },
+	{ TILE_FIXED_RIGHT, 6, 2 },
+	{ TILE_RIGHT_1,     6, 3 },
+	{ TILE_FIXED_DOWN,  4, 4 },
+	{ TILE_DOWN_1,      5, 4 }
+};
+
+static const TileInfo tiles_level_2[] = {
+	{ TILE_START,       1, 1 },
+	{ TILE_DOWN_1,      4, 1 },
+	{ TILE_FIXED_DOWN,  5, 1 },
+	{ TILE_RIGHT_1,     3, 2 },
+	{ TILE_FIXED_RIGHT, 3, 3 },
+	{ TILE_FIXED_LEFT,  6, 2 },
+	{ TILE_LEFT_1,      6, 3 },
+	{ TILE_FIXED_UP,    4, 4 },
+	{ TILE_UP_1,        5, 4 }
+};
+
+static const LevelInfo levels[] = {
+	{ tiles_level_1, SDL_arraysize(tiles_level_1) },
+	{ tiles_level_2, SDL_arraysize(tiles_level_2) }
+};
+
 Grid::Grid(BaseRenderer* renderer, int x, int y, int width, int height) : _renderer(renderer), _tileSprite(NULL), _mouseSprite(NULL), _selector(NULL), _tiles(NULL), _tileCount(0), _currentTile(0), _x(x), _y(y), _width(width), _height(height) {
 	_layout = new Uint8[_width * _height];
-	SDL_memset(_layout, 0, _width * _height);
+	SDL_memset(_layout, TILE_BLANK, _width * _height);
 	SDL_memset(_mice, 0, sizeof(_mice));
 }
 
@@ -56,6 +96,8 @@ bool Grid::init() {
 		}
 	}
 
+	loadLevel(0);
+
 	_mice[0] = new Mouse(this, MOUSE_DOWN,  _x + 0,   _y);
 	_mice[1] = new Mouse(this, MOUSE_LEFT,  _x + 24,  _y);
 	_mice[2] = new Mouse(this, MOUSE_RIGHT, _x + 48,  _y);
@@ -64,6 +106,17 @@ bool Grid::init() {
 	_mice[5] = new Mouse(this, MOUSE_RIGHT, _x + 120, _y);
 
 	return true;
+}
+
+void Grid::loadLevel(int level) {
+	const TileInfo *tiles = levels[level].tiles;
+	size_t tiles_count = levels[level].tiles_count;
+
+	SDL_memset(_layout, TILE_BLANK, _width * _height);
+
+	for (size_t i = 0; i < tiles_count; i++) {
+		_layout[(_width * tiles[i].y) + tiles[i].x] = tiles[i].tile;
+	}
 }
 
 void Grid::render() {
@@ -100,9 +153,22 @@ void Grid::renderTile(int tile, int x, int y) {
 }
 
 void Grid::selectTile(int tile) {
-	_layout[tile]++;
-	if (_layout[tile] == _tileCount)
-		_layout[tile] = 0;
+	switch (_layout[tile]) {
+	case TILE_LEFT_1:  _layout[tile] = TILE_UP_1;    break;
+	case TILE_RIGHT_1: _layout[tile] = TILE_DOWN_1;  break;
+	case TILE_UP_1:    _layout[tile] = TILE_RIGHT_1; break;
+	case TILE_DOWN_1:  _layout[tile] = TILE_LEFT_1;  break;
+
+	case TILE_LEFT_2:  _layout[tile] = TILE_UP_2;    break;
+	case TILE_RIGHT_2: _layout[tile] = TILE_DOWN_2;  break;
+	case TILE_UP_2:    _layout[tile] = TILE_RIGHT_2; break;
+	case TILE_DOWN_2:  _layout[tile] = TILE_LEFT_2;  break;
+
+	case TILE_LEFT_3:  _layout[tile] = TILE_UP_3;    break;
+	case TILE_RIGHT_3: _layout[tile] = TILE_DOWN_3;  break;
+	case TILE_UP_3:    _layout[tile] = TILE_RIGHT_3; break;
+	case TILE_DOWN_3:  _layout[tile] = TILE_LEFT_3;  break;
+	}
 }
 
 void Grid::moveSelector(int x, int y) {

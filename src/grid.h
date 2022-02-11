@@ -8,6 +8,38 @@ class BaseRenderer;
 class BaseSprite;
 class Mouse;
 
+enum {
+	TILE_LEFT_1      = 0,
+	TILE_RIGHT_1     = 1,
+	TILE_UP_1        = 2,
+	TILE_DOWN_1      = 3,
+	TILE_START       = 4,
+
+	TILE_LEFT_2      = 6,
+	TILE_RIGHT_2     = 7,
+	TILE_UP_2        = 8,
+	TILE_DOWN_2      = 9,
+	TILE_END_1       = 10,
+
+	TILE_LEFT_3      = 12,
+	TILE_RIGHT_3     = 13,
+	TILE_UP_3        = 14,
+	TILE_DOWN_3      = 15,
+	TILE_END_2       = 16,
+
+	TILE_FIXED_LEFT  = 18,
+	TILE_FIXED_RIGHT = 19,
+	TILE_FIXED_UP    = 20,
+	TILE_FIXED_DOWN  = 21,
+	TILE_BLANK       = 22,
+
+	TILE_PLUS_1      = 24,
+	TILE_MINUS_1     = 25,
+	TILE_PLUS_2      = 26,
+	TILE_MINUS_2     = 27,
+	TILE_SPIKES      = 28,
+};
+
 class Grid {
 	friend class Mouse;
 public:
@@ -46,6 +78,7 @@ private:
 	int _height;
 
 protected:
+	void loadLevel(int level);
 	void renderMouse(Mouse* mouse, int x, int y);
 	void renderTile(int tile, int x, int y);
 	void selectTile(int tile);
