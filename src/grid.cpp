@@ -1,14 +1,21 @@
 #include "grid.h"
 #include "constants.h"
+#include "mouse.h"
 #include "render.h"
 
-Grid::Grid(BaseRenderer* renderer, int x, int y, int width, int height) : _renderer(renderer), _x(x), _y(y), _width(width), _height(height), _tileSprite(0), _tiles(0), _tileCount(0) {
+Grid::Grid(BaseRenderer* renderer, int x, int y, int width, int height) : _renderer(renderer), _tileSprite(NULL), _mouseSprite(NULL), _selector(NULL), _tiles(NULL), _tileCount(0), _currentTile(0), _x(x), _y(y), _width(width), _height(height) {
 	_layout = new Uint8[_width * _height];
 	SDL_memset(_layout, 0, _width * _height);
+	SDL_memset(_mice, 0, sizeof(_mice));
 }
 
 Grid::~Grid() {
+	for (size_t i = 0; i < SDL_arraysize(_mice); i++) {
+		delete _mice[i];
+	}
+
 	delete _selector;
+	delete _mouseSprite;
 	delete _tileSprite;
 	delete _tiles;
 	delete _layout;
@@ -17,6 +24,11 @@ Grid::~Grid() {
 bool Grid::init() {
 	_tileSprite = _renderer->loadSprite(DATA_PATH "tiles.bmp", 0);
 	if (!_tileSprite) {
+		return false;
+	}
+
+	_mouseSprite = _renderer->loadSprite(DATA_PATH "mouse.bmp", 0);
+	if (!_mouseSprite) {
 		return false;
 	}
 
@@ -44,6 +56,13 @@ bool Grid::init() {
 		}
 	}
 
+	_mice[0] = new Mouse(this, MOUSE_DOWN,  _x + 0,   _y);
+	_mice[1] = new Mouse(this, MOUSE_LEFT,  _x + 24,  _y);
+	_mice[2] = new Mouse(this, MOUSE_RIGHT, _x + 48,  _y);
+	_mice[3] = new Mouse(this, MOUSE_UP,    _x + 72,  _y);
+	_mice[4] = new Mouse(this, MOUSE_DOWN,  _x + 96,  _y);
+	_mice[5] = new Mouse(this, MOUSE_RIGHT, _x + 120, _y);
+
 	return true;
 }
 
@@ -55,7 +74,22 @@ void Grid::render() {
 		}
 	}
 
+	for (size_t i = 0; i < SDL_arraysize(_mice); i++) {
+		if (!_mice[i])
+			continue;
+		_mice[i]->render();
+	}
+
 	_selector->render(_x + ((_currentTile % _width) * TILE_W) - 1, _y + ((_currentTile / _width) * TILE_H) - 1);
+}
+
+void Grid::renderMouse(Mouse* mouse, int x, int y) {
+	SDL_Rect srcRect;
+	srcRect.x = mouse->getFrame() * MOUSE_W;
+	srcRect.y = mouse->getDirection() * MOUSE_H;
+	srcRect.w = MOUSE_W;
+	srcRect.h = MOUSE_H;
+	_mouseSprite->render(&srcRect, x, y);
 }
 
 void Grid::renderTile(int tile, int x, int y) {

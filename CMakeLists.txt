@@ -25,6 +25,8 @@ add_executable(MouseMaze WIN32
 	src/font.h
 	src/grid.cpp
 	src/grid.h
+	src/mouse.cpp
+	src/mouse.h
 	src/palette.h
 	src/render.cpp
 	src/render.h

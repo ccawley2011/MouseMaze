@@ -36,4 +36,7 @@
 #define TILE_W 24
 #define TILE_H 24
 
+#define MOUSE_W 24
+#define MOUSE_H 24
+
 #endif
