@@ -62,6 +62,8 @@ public:
 	int getXMax() const { return _x + ((_width - 1) * TILE_W); }
 	int getYMax() const { return _y + ((_height - 1) * TILE_H); }
 
+	Uint8 getTileAt(int x, int y) const { return _layout[(y * _width) + x]; }
+
 private:
 	BaseRenderer* _renderer;
 	BaseSprite* _tileSprite;

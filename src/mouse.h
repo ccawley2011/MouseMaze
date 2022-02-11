@@ -14,7 +14,7 @@ enum {
 
 class Mouse {
 public:
-	Mouse(Grid* grid, int direction = MOUSE_DOWN, int x = 0, int y = 0) : _grid(grid), _lastAnimTicks(0), _lastMovementTicks(0), _direction(direction), _frame(0), _x(x), _y(y) {}
+	Mouse(Grid* grid, int direction = MOUSE_DOWN, int x = 0, int y = 0) : _grid(grid), _lastAnimTicks(0), _lastMovementTicks(0), _direction(direction), _frame(0), _x(x), _y(y), _lastTileX(x), _lastTileY(y) {}
 	~Mouse() {}
 
 	void render();
@@ -30,6 +30,8 @@ private:
 	int _frame;
 	int _x;
 	int _y;
+	int _lastTileX;
+	int _lastTileY;
 
 	void nextFrame();
 	void move();

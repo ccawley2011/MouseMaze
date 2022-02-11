@@ -23,7 +23,12 @@ static const TileInfo tiles_level_1[] = {
 	{ TILE_FIXED_RIGHT, 6, 2 },
 	{ TILE_RIGHT_1,     6, 3 },
 	{ TILE_FIXED_DOWN,  4, 4 },
-	{ TILE_DOWN_1,      5, 4 }
+	{ TILE_DOWN_1,      5, 4 },
+
+	{ TILE_RIGHT_1,     4, 0 },
+	{ TILE_UP_1,        0, 2 },
+	{ TILE_DOWN_1,      9, 3 },
+	{ TILE_LEFT_1,      5, 5 }
 };
 
 static const TileInfo tiles_level_2[] = {
