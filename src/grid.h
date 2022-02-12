@@ -37,7 +37,7 @@ enum {
 	TILE_MINUS_1     = 25,
 	TILE_PLUS_2      = 26,
 	TILE_MINUS_2     = 27,
-	TILE_SPIKES      = 28,
+	TILE_SPIKES      = 28
 };
 
 class Grid {

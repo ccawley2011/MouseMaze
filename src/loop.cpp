@@ -119,12 +119,12 @@ void GameLoop::closeJoystick() {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	if (_controller) {
 		SDL_GameControllerClose(_controller);
-		_controller = nullptr;
+		_controller = NULL;
 	}
 #endif
 	if (_joystick) {
 		SDL_JoystickClose(_joystick);
-		_joystick = nullptr;
+		_joystick = NULL;
 	}
 }
 
