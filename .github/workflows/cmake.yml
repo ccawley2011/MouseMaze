@@ -27,6 +27,37 @@ jobs:
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
+  mingw-w64:
+    runs-on: windows-latest
+
+    defaults:
+      run:
+        shell: 'msys2 {0}'
+
+    steps:
+    - name: Set up MSYS2
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: MINGW32
+        install: mingw-w64-i686-gcc mingw-w64-i686-cmake mingw-w64-i686-ninja mingw-w64-i686-SDL2
+
+    - uses: actions/checkout@v2
+
+    - name: Configure CMake
+      run: cmake -B build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} ${{matrix.platform.flags}}
+
+    - name: Build
+      run: cmake --build build --config ${{env.BUILD_TYPE}}
+
+    - name: Package
+      run: cmake --build build --config ${{env.BUILD_TYPE}} --target package
+
+    - name: Upload
+      uses: actions/upload-artifact@v2
+      with:
+        name: mousemaze-win32
+        path: build/mousemaze-win32.zip
+
   riscos:
     runs-on: ubuntu-latest
     container: scummvm/dockerized-toolchains:riscos
