@@ -40,7 +40,7 @@ add_executable(MouseMaze WIN32
 
 if(SDL2_FOUND)
 	target_include_directories(MouseMaze PUBLIC ${SDL2_INCLUDE_DIR})
-	target_link_libraries(MouseMaze PRIVATE ${SDL2_LIBRARY})
+	target_link_libraries(MouseMaze PRIVATE ${SDL2_LIBRARIES})
 endif(SDL2_FOUND)
 if(SDL_FOUND)
 	target_include_directories(MouseMaze PUBLIC ${SDL_INCLUDE_DIR})
