@@ -16,16 +16,16 @@ jobs:
         - { packages: cmake ninja-build libsdl1.2-dev, flags: -G Ninja -DSDL_VERSION=SDL1 }
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Install dependencies
-      run: sudo apt-get update && sudo apt-get install ${{matrix.platform.packages}}
+      run: sudo apt-get update && sudo apt-get install -y --no-install-recommends ${{matrix.platform.packages}}
 
     - name: Configure CMake
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} ${{matrix.platform.flags}}
+      run: cmake -B build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} ${{matrix.platform.flags}}
 
     - name: Build
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      run: cmake --build build --config ${{env.BUILD_TYPE}}
 
   mingw-w64:
     runs-on: windows-latest
@@ -39,12 +39,12 @@ jobs:
       uses: msys2/setup-msys2@v2
       with:
         msystem: MINGW32
-        install: mingw-w64-i686-gcc mingw-w64-i686-cmake mingw-w64-i686-ninja mingw-w64-i686-SDL2
+        install: mingw-w64-i686-gcc mingw-w64-i686-cmake mingw-w64-i686-SDL2
 
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Configure CMake
-      run: cmake -B build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} ${{matrix.platform.flags}}
+      run: cmake -B build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
     - name: Build
       run: cmake --build build --config ${{env.BUILD_TYPE}}
@@ -53,7 +53,7 @@ jobs:
       run: cmake --build build --config ${{env.BUILD_TYPE}} --target package
 
     - name: Upload
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: mousemaze-win32
         path: build/mousemaze-win32.zip
@@ -63,10 +63,10 @@ jobs:
     container: scummvm/dockerized-toolchains:riscos
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Configure CMake
-      run: cmake -Bbuild -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} ${{matrix.platform.flags}} -DCMAKE_TOOLCHAIN_FILE=cmake/RISCOS.cmake
+      run: cmake -Bbuild -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_TOOLCHAIN_FILE=cmake/RISCOS.cmake
 
     - name: Build
       run: cmake --build build --config ${{env.BUILD_TYPE}}
@@ -75,7 +75,7 @@ jobs:
       run: cmake --build build --config ${{env.BUILD_TYPE}} --target package
 
     - name: Upload
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: mousemaze-riscos
         path: build/mousemaze-riscos.tar.gz
