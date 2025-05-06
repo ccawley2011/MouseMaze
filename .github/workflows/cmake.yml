@@ -27,6 +27,33 @@ jobs:
     - name: Build
       run: cmake --build build --config ${{env.BUILD_TYPE}}
 
+  macosx:
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: libsdl-org/setup-sdl@main
+      id: sdl
+      with:
+        version: 2-latest
+        cmake-arguments: -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"
+
+    - name: Configure CMake
+      run: cmake -B build -G Xcode -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"
+
+    - name: Build
+      run: cmake --build build --config ${{env.BUILD_TYPE}}
+
+    - name: Package
+      run: cmake --build build --config ${{env.BUILD_TYPE}} --target package
+
+    - name: Upload
+      uses: actions/upload-artifact@v4
+      with:
+        name: mousemaze-macosx
+        path: build/mousemaze-macosx.dmg
+
   mingw-w64:
     runs-on: windows-latest
 

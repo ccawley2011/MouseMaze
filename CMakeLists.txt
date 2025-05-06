@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.0.2)
-project(MouseMaze LANGUAGES CXX)
+cmake_minimum_required(VERSION 3.0.2...3.12)
+project(MouseMaze LANGUAGES CXX VERSION "0.0.1")
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/")
 
@@ -21,7 +21,7 @@ else()
 	message(FATAL_ERROR "Invalid value for SDL_VERSION: ${SDL_VERSION}")
 endif()
 
-add_executable(MouseMaze WIN32
+set(SOURCES
 	src/main.cpp
 	src/compat.h
 	src/constants.h
@@ -37,6 +37,16 @@ add_executable(MouseMaze WIN32
 	src/loop.cpp
 	src/loop.h
 )
+
+set(RESOURCES
+	res/mouse.bmp
+	res/selector.bmp
+	res/tiles.bmp
+	res/unifont-13.0.06-license.txt
+	res/unifont-13.0.06.hex
+)
+
+add_executable(MouseMaze WIN32 ${SOURCES} ${RESOURCES})
 
 if(SDL2_FOUND)
 	target_include_directories(MouseMaze PUBLIC ${SDL2_INCLUDE_DIR})
@@ -82,6 +92,26 @@ if(WIN32)
 	else()
 		set(CPACK_PACKAGE_FILE_NAME "mousemaze-win32")
 	endif()
+endif()
+
+if(APPLE)
+	set_source_files_properties(${RESOURCES} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources/res")
+	set_target_properties(MouseMaze PROPERTIES
+		RESOURCES "${RESOURCES}"
+		MACOSX_BUNDLE TRUE
+		MACOSX_BUNDLE_BUNDLE_NAME ${CMAKE_PROJECT_NAME}
+		MACOSX_BUNDLE_BUNDLE_VERSION ${CMAKE_PROJECT_VERSION}
+	)
+
+	install(TARGETS MouseMaze
+		BUNDLE DESTINATION . COMPONENT Runtime
+		RUNTIME DESTINATION bin COMPONENT Runtime
+	)
+	install(CODE "include(BundleUtilities)
+	fixup_bundle(\"\${CMAKE_INSTALL_PREFIX}/MouseMaze.app\" \"\" \"\")")
+
+	set(CPACK_GENERATOR "DragNDrop")
+	set(CPACK_PACKAGE_FILE_NAME "mousemaze-macosx")
 endif()
 
 if(RISCOS)
