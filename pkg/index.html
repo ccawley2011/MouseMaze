@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <style>
+        html, body, canvas {
+            /* Remove the top and left borders */
+            margin:0;
+            padding:0;
+            /* Ensure the canvas can take up the entire space */
+            width:100%;
+            height:100%;
+        }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas" oncontextmenu="event.preventDefault()"></canvas>
+
+    <!-- Allow SDL to access the canvas element -->
+    <script type='text/javascript'>
+        var Module = {
+            canvas: (function() { return document.getElementById('canvas'); })()
+        };
+    </script>
+
+    <script type="text/javascript" src="MouseMaze.js"></script>
+  </body>
+</html>

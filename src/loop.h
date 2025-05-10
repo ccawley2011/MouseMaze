@@ -14,7 +14,7 @@ public:
 	~GameLoop();
 
 	bool init();
-	void run();
+	bool iterate();
 
 private:
 	void handleEvent(SDL_Event* event);

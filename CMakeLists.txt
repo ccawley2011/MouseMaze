@@ -8,6 +8,13 @@ set(CMAKE_CXX_STANDARD 98)
 set(SDL_VERSION AUTO CACHE STRING "Specify which SDL version to use")
 set_property(CACHE SDL_VERSION PROPERTY STRINGS AUTO SDL1 SDL2)
 
+if (EMSCRIPTEN)
+	# HACK: Emscripten requires extra parameters on first use that
+	# aren't handled by the detection scripts
+	include(CheckCXXCompilerFlag)
+	check_cxx_compiler_flag("-s USE_SDL=2" HAS_SDL2_EMSCRIPTEN)
+endif()
+
 if(SDL_VERSION STREQUAL "AUTO")
 	find_package(SDL2)
 	if(NOT SDL2_FOUND)
@@ -82,6 +89,15 @@ if(WIN32)
 	else()
 		set(CPACK_PACKAGE_FILE_NAME "mousemaze-win32")
 	endif()
+endif()
+
+if(EMSCRIPTEN)
+	target_link_options(MouseMaze PRIVATE
+		--preload-file "${CMAKE_SOURCE_DIR}/res@res/"
+	)
+	file(CREATE_LINK ${CMAKE_SOURCE_DIR}/pkg/index.html ${CMAKE_BINARY_DIR}/index.html COPY_ON_ERROR SYMBOLIC)
+
+	# TODO: Use CPack
 endif()
 
 if(RISCOS)

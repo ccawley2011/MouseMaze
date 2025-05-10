@@ -141,13 +141,11 @@ void GameLoop::render()
 	_renderer->present();
 }
 
-void GameLoop::run() {
+bool GameLoop::iterate() {
 	SDL_Event event;
-	while (!_shouldQuit) {
-		while (SDL_PollEvent(&event)) {
-			handleEvent(&event);
-		}
-		render();
-		SDL_Delay(10);
+	while (SDL_PollEvent(&event)) {
+		handleEvent(&event);
 	}
+	render();
+	return !_shouldQuit;
 }
