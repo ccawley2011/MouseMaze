@@ -78,13 +78,15 @@ bool Renderer::init(const char* title, int width, int height) {
 	if (SDL_InitSubSystem(SDL_INIT_VIDEO) < 0)
 		return false;
 
-	_window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, 0);
+	_window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_RESIZABLE);
 	if (!_window)
 		return false;
 
 	_renderer = SDL_CreateRenderer(_window, -1, 0);
 	if (!_renderer)
 		return false;
+
+	SDL_RenderSetLogicalSize(_renderer, width, height);
 
 	return true;
 }
