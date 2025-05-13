@@ -4,18 +4,18 @@
 #include "grid.h"
 #include "render.h"
 
-GameLoop::GameLoop(BaseRenderer* renderer) : _joystick(NULL),
+GameLoop::GameLoop() : _joystick(NULL),
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 		_controller(NULL),
 #endif
-		_renderer(renderer), _shouldQuit(false), _title(NULL) {
-	_font = new Font(0x100);
-	_grid = new Grid(renderer, GRID_X, GRID_Y, 10, 6);
+		_renderer(NULL), _shouldQuit(false),
+		_grid(NULL), _font(NULL), _title(NULL) {
 }
 
 GameLoop::~GameLoop() {
 	delete _grid;
 	delete _font;
+	delete _renderer;
 
 	closeJoystick();
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -32,16 +32,27 @@ bool GameLoop::init() {
 	openJoystick(0);
 #endif
 
-	if (!_grid->init()) {
+	_renderer = BaseRenderer::create();
+	if (!_renderer->init("Mouse Maze", SCREEN_X, SCREEN_Y)) {
+		_renderer->msgBox("Couldn't initialize SDL: %s", SDL_GetError());
 		return false;
 	}
 
+	_grid = new Grid(_renderer, GRID_X, GRID_Y, 10, 6);
+	if (!_grid->init()) {
+		_renderer->msgBox("Couldn't create grid: %s", SDL_GetError());
+		return false;
+	}
+
+	_font = new Font(0x100);
 	if (!_font->load(DATA_PATH "unifont-13.0.06.hex")) {
+		_renderer->msgBox("Couldn't load font: %s", SDL_GetError());
 		return false;
 	}
 
 	_title = _font->createSprite(_renderer, "Mouse Maze", 0xFF, 0xFF, 0xFF);
 	if (!_title) {
+		_renderer->msgBox("Couldn't create title sprite: %s", SDL_GetError());
 		return false;
 	}
 

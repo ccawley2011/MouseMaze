@@ -10,7 +10,7 @@ class Grid;
 
 class GameLoop {
 public:
-	GameLoop(BaseRenderer* renderer);
+	GameLoop();
 	~GameLoop();
 
 	bool init();

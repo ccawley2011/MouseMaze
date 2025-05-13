@@ -1,11 +1,9 @@
+#include "compat.h"
+#include "loop.h"
+
 #ifdef __NDS__
 #include <filesystem.h>
 #endif
-
-#include "compat.h"
-#include "constants.h"
-#include "render.h"
-#include "loop.h"
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten/emscripten.h>
@@ -20,9 +18,8 @@ static void loop_cb(void *arg) {
 
 int main(int argc, char* argv[])
 {
-	BaseRenderer* renderer = NULL;
 	GameLoop* loop = NULL;
-	int retval = EXIT_FAILURE;
+	int retval = EXIT_SUCCESS;
 
 	(void)argc;
 	(void)argv;
@@ -31,27 +28,20 @@ int main(int argc, char* argv[])
 	nitroFSInit(NULL);
 #endif
 
-	/* Initialize SDL */
-	renderer = BaseRenderer::create();
-	if (renderer->init("Mouse Maze", SCREEN_X, SCREEN_Y)) {
-		loop = new GameLoop(renderer);
-		if (loop->init()) {
+	/* Initialize the game */
+	loop = new GameLoop();
+	if (loop->init()) {
 #ifdef __EMSCRIPTEN__
-			emscripten_set_main_loop_arg(loop_cb, loop, 0, 1);
+		emscripten_set_main_loop_arg(loop_cb, loop, 0, 1);
 #else
-			while (loop->iterate()) {
-				SDL_Delay(10);
-			}
-#endif
-		} else {
-			renderer->msgBox("Couldn't initialize game: %s", SDL_GetError());
+		while (loop->iterate()) {
+			SDL_Delay(10);
 		}
+#endif
 	} else {
-		renderer->msgBox("Couldn't initialize SDL: %s", SDL_GetError());
+		retval = EXIT_FAILURE;
 	}
-
 	delete loop;
-	delete renderer;
 
 #ifdef __NDS__
 	if (retval == EXIT_FAILURE)
