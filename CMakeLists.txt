@@ -104,8 +104,8 @@ if(RISCOS)
 	target_link_options(MouseMaze PRIVATE -static)
 	riscos_elf2aif(MouseMaze OUTPUT_NAME MouseMaze,ff8)
 
-	install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/!MouseMaze/!Boot,feb
-	              ${CMAKE_CURRENT_SOURCE_DIR}/!MouseMaze/!Run,feb
+	install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/pkg/!MouseMaze/!Boot,feb
+	              ${CMAKE_CURRENT_SOURCE_DIR}/pkg/!MouseMaze/!Run,feb
 	              ${CMAKE_CURRENT_BINARY_DIR}/MouseMaze,ff8
 	        DESTINATION !MouseMaze
 	)
