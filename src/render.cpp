@@ -35,6 +35,31 @@ BaseSprite* BaseRenderer::loadSprite(const char* fname, Uint32 key) {
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 
+class Renderer : public BaseRenderer {
+	friend class Sprite;
+public:
+	Renderer() : BaseRenderer(), _window(NULL), _renderer(NULL), _title(NULL) {}
+	virtual ~Renderer();
+
+	virtual bool init(const char* title, int width, int height);
+	virtual void clear();
+	virtual void present();
+
+	virtual BaseSprite* loadSprite(SDL_Surface* surface, Uint32 key);
+
+	virtual SDL_Surface* createSurface(int width, int height);
+
+	virtual void msgBoxV(const char* msg, va_list ap);
+
+protected:
+	SDL_Renderer *getRenderer() const { return _renderer; }
+
+private:
+	SDL_Window *_window;
+	SDL_Renderer *_renderer;
+	char *_title;
+};
+
 class Sprite : public BaseSprite {
 public:
 	Sprite(Renderer* renderer, SDL_Surface *surface, Uint32 key) : BaseSprite(), _renderer(renderer) {
@@ -117,9 +142,39 @@ void Renderer::msgBoxV(const char* msg, va_list ap) {
 
 	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, _title, fullMsg, _window);
 }
+
+BaseRenderer *BaseRenderer::create() {
+	return new Renderer();
+}
+
 #else
 
 #include "palette.h"
+
+class Renderer : public BaseRenderer {
+	friend class Sprite;
+public:
+	Renderer() : BaseRenderer(), _screen(NULL), _background(0), _title(NULL) {}
+	~Renderer();
+
+	virtual bool init(const char* title, int width, int height);
+	virtual void clear();
+	virtual void present();
+
+	virtual BaseSprite* loadSprite(SDL_Surface* surface, Uint32 key);
+
+	virtual SDL_Surface* createSurface(int width, int height);
+
+	virtual void msgBoxV(const char* msg, va_list ap);
+
+protected:
+	SDL_Surface* getScreen() const { return _screen; }
+
+private:
+	SDL_Surface* _screen;
+	Uint32 _background;
+	char* _title;
+};
 
 class Sprite : public BaseSprite {
 public:
@@ -196,4 +251,9 @@ void Renderer::msgBoxV(const char* msg, va_list ap) {
 	fprintf(stderr, "\n");
 #endif
 }
+
+BaseRenderer *BaseRenderer::create() {
+	return new Renderer();
+}
+
 #endif

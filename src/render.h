@@ -25,6 +25,8 @@ public:
 	BaseRenderer() : _width(0), _height(0) {}
 	virtual ~BaseRenderer() {}
 
+	static BaseRenderer *create();
+
 	virtual bool init(const char* title, int width, int height) = 0;
 	virtual void clear() = 0;
 	virtual void present() = 0;
@@ -43,59 +45,5 @@ public:
 protected:
 	int _width, _height;
 };
-
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-class Renderer : public BaseRenderer {
-	friend class Sprite;
-public:
-	Renderer() : BaseRenderer(), _window(NULL), _renderer(NULL), _title(NULL) {}
-	virtual ~Renderer();
-
-	virtual bool init(const char* title, int width, int height);
-	virtual void clear();
-	virtual void present();
-
-	virtual BaseSprite* loadSprite(SDL_Surface* surface, Uint32 key);
-
-	virtual SDL_Surface* createSurface(int width, int height);
-
-	virtual void msgBoxV(const char* msg, va_list ap);
-
-protected:
-	SDL_Renderer *getRenderer() const { return _renderer; }
-
-private:
-	SDL_Window *_window;
-	SDL_Renderer *_renderer;
-	char *_title;
-};
-
-#else
-class Renderer : public BaseRenderer {
-	friend class Sprite;
-public:
-	Renderer() : BaseRenderer(), _screen(NULL), _background(0), _title(NULL) {}
-	~Renderer();
-
-	virtual bool init(const char* title, int width, int height);
-	virtual void clear();
-	virtual void present();
-
-	virtual BaseSprite* loadSprite(SDL_Surface* surface, Uint32 key);
-
-	virtual SDL_Surface* createSurface(int width, int height);
-
-	virtual void msgBoxV(const char* msg, va_list ap);
-
-protected:
-	SDL_Surface* getScreen() const { return _screen; }
-
-private:
-	SDL_Surface* _screen;
-	Uint32 _background;
-	char* _title;
-};
-
-#endif
 
 #endif

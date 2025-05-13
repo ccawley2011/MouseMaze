@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
 #endif
 
 	/* Initialize SDL */
-	renderer = new Renderer();
+	renderer = BaseRenderer::create();
 	if (renderer->init("Mouse Maze", SCREEN_X, SCREEN_Y)) {
 		loop = new GameLoop(renderer);
 		if (loop->init()) {
